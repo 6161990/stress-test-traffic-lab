@@ -1,0 +1,130 @@
+### Health Check
+GET http://localhost:8080/actuator/health
+
+### 모든 상품 조회
+GET http://localhost:8080/api/products
+
+### 특정 상품 조회
+GET http://localhost:8080/api/products/1
+
+### 상품 검색
+GET http://localhost:8080/api/products/search?name=노트북
+
+### 재고 있는 상품 조회
+GET http://localhost:8080/api/products/in-stock
+
+### 가격대별 상품 조회
+GET http://localhost:8080/api/products/price-range?minPrice=100000&maxPrice=500000
+
+### 상품 생성
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+    "name": "새로운 상품",
+    "price": 250000,
+    "stock": 100,
+    "description": "테스트 상품입니다"
+}
+
+### 모든 사용자 조회
+GET http://localhost:8080/api/users
+
+### 특정 사용자 조회
+GET http://localhost:8080/api/users/1
+
+### 사용자 생성
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+    "email": "newuser@test.com",
+    "name": "신규 사용자"
+}
+
+### 사용자별 주문 조회
+GET http://localhost:8080/api/orders/user/1
+
+### 주문 생성 (단일 상품)
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+    "userId": 1,
+    "items": [
+        {
+            "productId": 1,
+            "quantity": 1
+        }
+    ]
+}
+
+### 주문 생성 (여러 상품)
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+    "userId": 2,
+    "items": [
+        {
+            "productId": 1,
+            "quantity": 1
+        },
+        {
+            "productId": 2,
+            "quantity": 2
+        },
+        {
+            "productId": 5,
+            "quantity": 1
+        }
+    ]
+}
+
+### 대량 주문 생성 (재고 부족 테스트)
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+    "userId": 3,
+    "items": [
+        {
+            "productId": 1,
+            "quantity": 100
+        }
+    ]
+}
+
+### 존재하지 않는 사용자로 주문 생성 (에러 테스트)
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+    "userId": 999,
+    "items": [
+        {
+            "productId": 1,
+            "quantity": 1
+        }
+    ]
+}
+
+### 존재하지 않는 상품으로 주문 생성 (에러 테스트)
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+    "userId": 1,
+    "items": [
+        {
+            "productId": 999,
+            "quantity": 1
+        }
+    ]
+}
+
+### Actuator Metrics
+GET http://localhost:8080/actuator/metrics
+
+### Actuator Info
+GET http://localhost:8080/actuator/info
