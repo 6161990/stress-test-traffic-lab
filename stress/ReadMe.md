@@ -54,8 +54,8 @@ docker exec stress-jmeter jmeter -n -t /jmeter/api-stress-test.jmx -l /jmeter/ap
 
 #### HTML 리포트 생성
 ```shell
-docker exec stress-jmeter mkdir -p /tmp/jmeter-report
-docker exec stress-jmeter jmeter -g /jmeter/api-result.jtl -o /tmp/jmeter-report/
+docker exec stress-jmeter mkdir -p /jmeter-report
+docker exec stress-jmeter jmeter -g /jmeter/api-result.jtl -o /jmeter-report/
 ```
 
 #### 결과 파일 호스트로 복사
