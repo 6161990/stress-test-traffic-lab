@@ -13,6 +13,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+/stress/jmeter-report
 
 # query dsl gitignore
 /src/main/generated
