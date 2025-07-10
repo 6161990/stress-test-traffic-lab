@@ -40,31 +40,35 @@ curl http://localhost:8080/actuator/health
 
 ## JMeter 스트레스 테스트 실행
 
-### 1. JMeter 스크립트 파일을 Docker 컨테이너로 복사
+### 방법 1: 명령어로 실행 (추천)
 ```shell
-docker cp api-stress-test.jmx stress-jmeter:/jmeter/api-stress-test.jmx
+# 로컬에서 직접 실행
+jmeter -n -t jmeter/api-stress-test.jmx -l jmeter/test-results.jtl
 ```
 
-### 2. JMeter 테스트 실행
+### 방법 2: Docker로 실행 (선택사항)
 ```shell
-docker exec stress-jmeter jmeter -n -t /jmeter/api-stress-test.jmx -l /jmeter/api-result.jtl
+# 1. 스크립트 파일을 Docker 컨테이너로 복사
+docker cp jmeter/api-stress-test.jmx stress-jmeter:/jmeter/api-stress-test.jmx
+
+# 2. JMeter 테스트 실행
+docker exec stress-jmeter rm -f /jmeter/test-results.jtl
+docker exec stress-jmeter jmeter -n -t /jmeter/api-stress-test.jmx -l /jmeter/test-results.jtl
 ```
 
-### 3. 결과 리포트 생성
-
-#### HTML 리포트 생성
+### 3. HTML 리포트 생성
 ```shell
-docker exec stress-jmeter mkdir -p /jmeter-report
-docker exec stress-jmeter jmeter -g /jmeter/api-result.jtl -o /jmeter-report/
+docker exec stress-jmeter rm -rf /jmeter-report
+docker exec stress-jmeter jmeter -g /jmeter/test-results.jtl -o /jmeter-report
 ```
 
-#### 결과 파일 호스트로 복사
+### 4. 결과 파일 호스트로 복사
 ```shell
-docker cp stress-jmeter:/jmeter/api-result.jtl ./api-result.jtl
-docker cp stress-jmeter:/tmp/jmeter-report ./jmeter-report
+docker cp stress-jmeter:/jmeter/test-results.jtl ./jmeter/test-results.jtl
+docker cp stress-jmeter:/jmeter-report ./jmeter-report
 ```
 
-#### 리포트 확인
+### 5. 리포트 확인
 ```shell
 open jmeter-report/index.html
 ```
@@ -73,23 +77,23 @@ open jmeter-report/index.html
 
 ### API 스트레스 테스트 (api-stress-test.jmx)
 
-#### Product API (20개 스레드, 3회 반복)
+#### Product API (10개 스레드, 2회 반복)
 - `GET /api/products` - 전체 상품 조회
 - `GET /api/products/{id}` - 특정 상품 조회
 - `GET /api/products/in-stock` - 재고 있는 상품 조회
-- `GET /api/products/search?name={name}` - 상품 이름으로 검색
+- `GET /api/products/search?name=Test` - 상품 이름으로 검색 (수정완료)
 - `POST /api/products` - 새 상품 생성
 
-#### User API (10개 스레드, 2회 반복)
+#### User API (5개 스레드, 2회 반복)
 - `GET /api/users` - 전체 사용자 조회
 - `GET /api/users/{id}` - 특정 사용자 조회
 - `POST /api/users` - 새 사용자 생성
 
-#### Order API (5개 스레드, 2회 반복)
+#### Order API (3개 스레드, 2회 반복)
 - `GET /api/orders/user/{userId}` - 사용자별 주문 조회
-- `POST /api/orders` - 새 주문 생성
+- `POST /api/orders` - 새 주문 생성 (JSON 구조 수정완료)
 
-#### Health Check (5개 스레드, 1회 실행)
+#### Health Check (2개 스레드, 1회 실행)
 - `GET /actuator/health` - 애플리케이션 상태 확인
 
 ## 테스트 데이터
@@ -109,9 +113,9 @@ JMeter 테스트 중 랜덤 데이터로 생성:
 ## 설정 변경
 
 ### JMeter 스크립트 설정
-테스트 파라미터는 JMeter 스크립트의 User Defined Variables에서 변경 가능:
-- `host`: 테스트 대상 호스트 (기본값: stress)
-- `port`: 테스트 대상 포트 (기본값: 8080)
+**중요**: 모든 엔드포인트가 `localhost:8080`으로 직접 설정되어 있습니다.
+- 다른 호스트/포트로 테스트하려면 JMeter GUI에서 각 HTTP Request의 Server Name과 Port Number를 수정하세요.
+- 현재 설정: `localhost:8080` (로컬 개발 환경)
 
 ### 로드 테스트 설정 변경
 스레드 수와 반복 횟수는 각 Thread Group에서 수정:
@@ -200,7 +204,7 @@ docker-compose down
 #### 3. JMeter 스크립트 파일 없음
 ```shell
 # 파일 복사 재시도
-docker cp api-stress-test.jmx stress-jmeter:/jmeter/api-stress-test.jmx
+docker cp jmeter/api-stress-test.jmx stress-jmeter:/jmeter/api-stress-test.jmx
 ```
 
 #### 4. 메모리 부족
@@ -220,3 +224,7 @@ docker cp api-stress-test.jmx stress-jmeter:/jmeter/api-stress-test.jmx
 - [JMeter 공식 문서](https://jmeter.apache.org/usermanual/index.html)
 - [Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html)
 - [Docker Compose 문서](https://docs.docker.com/compose/)
+
+TODO
+- readme 만 실행해서 성능 테스트 할 수 있도록
+- 스크립트 변경 어디서 하는지 직접 하는 방법 서치 -> 수정된 스크립트로 바로바로 성능테스트 진행할수있도록 하기 ㅐㅐ09
