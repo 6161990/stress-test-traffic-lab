@@ -2,6 +2,7 @@ package com.yoon.stress.controller
 
 import com.yoon.stress.entity.User
 import com.yoon.stress.service.UserService
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 class UserController(
     private val userService: UserService
 ) {
-    
+
     @GetMapping
     fun getAllUsers(): List<User> = userService.getAllUsers()
     
