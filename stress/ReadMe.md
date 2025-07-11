@@ -38,39 +38,10 @@ curl http://localhost:8080/actuator/health
 }
 ```
 
-## JMeter 스트레스 테스트 실행
-
-### 방법 1: 명령어로 실행 (추천)
+## JMeter 스트레스 테스트 실행 🚀
 ```shell
-# 로컬에서 직접 실행
-jmeter -n -t jmeter/api-stress-test.jmx -l jmeter/test-results.jtl
-```
-
-### 방법 2: Docker로 실행 (선택사항)
-```shell
-# 1. 스크립트 파일을 Docker 컨테이너로 복사
-docker cp jmeter/api-stress-test.jmx stress-jmeter:/jmeter/api-stress-test.jmx
-
-# 2. JMeter 테스트 실행
-docker exec stress-jmeter rm -f /jmeter/test-results.jtl
-docker exec stress-jmeter jmeter -n -t /jmeter/api-stress-test.jmx -l /jmeter/test-results.jtl
-```
-
-### 3. HTML 리포트 생성
-```shell
-docker exec stress-jmeter rm -rf /jmeter-report
-docker exec stress-jmeter jmeter -g /jmeter/test-results.jtl -o /jmeter-report
-```
-
-### 4. 결과 파일 호스트로 복사
-```shell
-docker cp stress-jmeter:/jmeter/test-results.jtl ./jmeter/test-results.jtl
-docker cp stress-jmeter:/jmeter-report ./jmeter-report
-```
-
-### 5. 리포트 확인
-```shell
-open jmeter-report/index.html
+# 원클릭 테스트 실행 (테스트 → 리포트 생성 → 브라우저 자동 실행)
+./run-test.sh
 ```
 
 ## 테스트 시나리오
@@ -180,8 +151,6 @@ docker-compose ps
 - 95th Percentile: < 500ms
 - 오류율: < 5%
 - 처리율: > 50 TPS
-
-## 문제 해결
 
 ### 일반적인 문제들
 

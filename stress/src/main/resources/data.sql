@@ -36,17 +36,18 @@ CREATE TABLE IF NOT EXISTS order_items
 );
 
 -- 사용자 데이터
-INSERT INTO users (email, name, created_at)
-VALUES ('user1@test.com', '김철수', NOW()),
-       ('user2@test.com', '이영희', NOW()),
-       ('user3@test.com', '박민수', NOW()),
-       ('user4@test.com', '최지영', NOW()),
-       ('user5@test.com', '정다은', NOW()),
-       ('user6@test.com', '홍길동', NOW()),
-       ('user7@test.com', '김민지', NOW()),
-       ('user8@test.com', '이준호', NOW()),
-       ('user9@test.com', '박서연', NOW()),
-       ('user10@test.com', '최윤석', NOW());
+INSERT INTO users (id, email, name, created_at)
+VALUES (1,'user1@test.com', '김철수', NOW()),
+       (2,'user2@test.com', '이영희', NOW()),
+       (3,'user3@test.com', '박민수', NOW()),
+       (4,'user4@test.com', '최지영', NOW()),
+       (5,'user5@test.com', '정다은', NOW()),
+       (6,'user6@test.com', '홍길동', NOW()),
+       (7,'user7@test.com', '김민지', NOW()),
+       (8,'user8@test.com', '이준호', NOW()),
+       (9,'user9@test.com', '박서연', NOW()),
+       (10,'user10@test.com', '최윤석', NOW()),
+       (11,'user11@test.com', '차차차', NOW());
 
 -- 상품 데이터
 INSERT INTO products (name, price, stock, description, created_at)
@@ -69,7 +70,7 @@ VALUES ('노트북', 1500000, 50, '고성능 노트북', NOW()),
 
 -- 주문 데이터
 INSERT INTO orders (user_id, total_amount, status, created_at)
-VALUES (1, 1580000, 'CONFIRMED', NOW()),
+VALUES (11, 1580000, 'CONFIRMED', NOW()),
        (2, 880000, 'SHIPPED', NOW()),
        (3, 750000, 'DELIVERED', NOW()),
        (4, 550000, 'CANCELLED', NOW()),
