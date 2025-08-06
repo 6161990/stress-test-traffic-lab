@@ -38,6 +38,23 @@ curl http://localhost:8080/actuator/health
 }
 ```
 
+## Gatling 스트레스 테스트 실행 🚀
+```
+./gradlew run --args="--simulation simulation.ProductSimulation"
+```
+
+```
+./gradlew gatlingRun-com.yoon.stress.simulation.ProductSimulation
+```
+
+```
+./gradlew gatlingRun-com.yoon.stress.simulation.OrderSimulation
+```
+
+```
+./gradlew gatlingRun-com.yoon.stress.simulation.UserSimulation
+```
+
 ## JMeter 스트레스 테스트 실행 🚀
 ```shell
 # 원클릭 테스트 실행 (테스트 → 리포트 생성 → 브라우저 자동 실행)
