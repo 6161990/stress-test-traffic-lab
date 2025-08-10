@@ -59,7 +59,7 @@ public class ProductSimulation extends Simulation {
                     {
                         "name": "New Product #{randomInt}",
                         "price": 19000,
-                        "stock": 100
+                        "stock": 100,
                         "description": "Test product description"
                     }
                 """)).asJson()
@@ -69,10 +69,24 @@ public class ProductSimulation extends Simulation {
 
     {
         setUp(
+            /**
+             *  injectOpen : Open Workload (트래픽 유입 속도 기반) => 트래픽 유입량(RPS) 제어
+             *  초당 몇 명이 유입 되느냐에 집중하며 외부에서 유저들이 계속 새로 유입되는 상황을 시뮬레이션 할 수 있다.
+             * */
             scn.injectOpen(
-                atOnceUsers(20),
-                rampUsers(80).during(Duration.ofSeconds(60)),
-                constantUsersPerSec(15).during(Duration.ofSeconds(120))
+                atOnceUsers(20), // 즉시 20 call 주입 : 1초 안에 모두 처리된다면 20 * 6 => 120 req/s
+                rampUsers(80).during(Duration.ofSeconds(60)), // 60초 동안 80 call 주입 : 80/60 = 1.33 * 6 => 8 req/s
+                constantUsersPerSec(5).during(Duration.ofSeconds(120)) // 120초 동안 초당 5 유저 신규 주입 : 5 * 6 => 30 req/s
+                    /**
+                     * 순차대로 120 req/s + 8 req/s + 30 req/s = 158 req/s
+                     * */
+            ).protocols(httpProtocol),
+                /**
+                 *  injectClosed : Closed Workload (동시 접속자 수 기반)
+                 *  동시에 몇 명이 유지되느냐에 집중, 서버 내부에서 동시 처리 세션 수를 유지하는 상황 시뮬레이션
+                 * */
+            scn.injectClosed(
+                constantConcurrentUsers(50).during(Duration.ofSeconds(60))  // 동시 사용자 50명 유지 : 50 * 0.2(RT) => 250 req/s
             ).protocols(httpProtocol)
         ).assertions(
             global().responseTime().max().lt(3000),
@@ -82,3 +96,21 @@ public class ProductSimulation extends Simulation {
         );
     }
 }
+
+
+/**
+ * question
+ * 1. injectOpen 에서 주입된 유저들이 concurrentUser 중 일부인가?
+ * -> nope. injectOpen 과 injectClosed 는 별도로 돌아감.
+ *    그래서 injectOpen rampUp 기간을 늘려도 injectClosed 의 concurrent VU 가 50이라면 50은 보장되는 상황이됨.
+ *    서버 입장에선 합쳐진 부하임. 순차로 실행하고 싶다면 injectOpen 뒤, andThen() 으로 핸들링할 수 있음.
+ * 2. 그럼 injectOpen, injectClose population 의 concurrent VU 는 몇일까?
+ * -> injectOpen 은 RPS(유입율) * 평균 RT(응답시간) 에 따라 달라짐, 하나의 VU 실행이 끝나야 다음 대기 VU 가 인입되므로,
+ * -> injectClose 는 무조건 동시성 세팅 값을 강제.
+ *
+ *
+ * 평균 RT	Closed RPS	Open RPS(평균)	합계 (대략)
+ * 0.2s	     250	        38	         ~288 rps (+ 시작 스파이크)
+ * 0.5s	     100	        38	         ~138 rps (+ 시작 스파이크)
+ * 1.0s	     50	            38	         ~88  rps (+ 시작 스파이크)
+ * */
