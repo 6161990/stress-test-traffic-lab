@@ -96,21 +96,3 @@ public class ProductSimulation extends Simulation {
         );
     }
 }
-
-
-/**
- * question
- * 1. injectOpen 에서 주입된 유저들이 concurrentUser 중 일부인가?
- * -> nope. injectOpen 과 injectClosed 는 별도로 돌아감.
- *    그래서 injectOpen rampUp 기간을 늘려도 injectClosed 의 concurrent VU 가 50이라면 50은 보장되는 상황이됨.
- *    서버 입장에선 합쳐진 부하임. 순차로 실행하고 싶다면 injectOpen 뒤, andThen() 으로 핸들링할 수 있음.
- * 2. 그럼 injectOpen, injectClose population 의 concurrent VU 는 몇일까?
- * -> injectOpen 은 RPS(유입율) * 평균 RT(응답시간) 에 따라 달라짐, 하나의 VU 실행이 끝나야 다음 대기 VU 가 인입되므로,
- * -> injectClose 는 무조건 동시성 세팅 값을 강제.
- *
- *
- * 평균 RT	Closed RPS	Open RPS(평균)	합계 (대략)
- * 0.2s	     250	        38	         ~288 rps (+ 시작 스파이크)
- * 0.5s	     100	        38	         ~138 rps (+ 시작 스파이크)
- * 1.0s	     50	            38	         ~88  rps (+ 시작 스파이크)
- * */
