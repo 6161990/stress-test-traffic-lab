@@ -40,10 +40,6 @@ curl http://localhost:8080/actuator/health
 
 ## Gatling 스트레스 테스트 실행 🚀
 ```shell
-./gradlew run --args="--simulation simulation.ProductSimulation"
-```
-
-```shell
 ./gradlew gatlingRun-com.yoon.stress.simulation.ProductSimulation
 ```
 

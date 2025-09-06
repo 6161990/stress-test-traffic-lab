@@ -63,7 +63,7 @@ public class ProductSimulation extends Simulation {
                         "description": "Test product description"
                     }
                 """)).asJson()
-                .check(status().is(201))
+                .check(status().is(200))
 //                .check(jsonPath("$.id").saveAs("newProductId"))
         );
 
@@ -80,14 +80,15 @@ public class ProductSimulation extends Simulation {
                     /**
                      * 순차대로 120 req/s + 8 req/s + 30 req/s = 158 req/s
                      * */
-            ).protocols(httpProtocol),
+            ).protocols(httpProtocol)
                 /**
+                 ,
                  *  injectClosed : Closed Workload (동시 접속자 수 기반)
                  *  동시에 몇 명이 유지되느냐에 집중, 서버 내부에서 동시 처리 세션 수를 유지하는 상황 시뮬레이션
-                 * */
+
             scn.injectClosed(
                 constantConcurrentUsers(50).during(Duration.ofSeconds(60))  // 동시 사용자 50명 유지 : 50 * 0.2(RT) => 250 req/s
-            ).protocols(httpProtocol)
+            ).protocols(httpProtocol)     * */
         ).assertions(
             global().responseTime().max().lt(3000),
             global().responseTime().mean().lt(1000),

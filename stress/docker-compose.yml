@@ -34,11 +34,11 @@ services:
       retries: 10
       start_period: 30s
 
-  jmeter:
-    image: justb4/jmeter:5.5
-    container_name: stress-jmeter
-    volumes:
-      - ./jmeter:/jmeter
-    entrypoint: ["/bin/bash"]
-    stdin_open: true
-    tty: true
+#  jmeter:
+#    image: justb4/jmeter:5.5
+#    container_name: stress-jmeter
+#    volumes:
+#      - ./jmeter:/jmeter
+#    entrypoint: ["/bin/bash"]
+#    stdin_open: true
+#    tty: true
